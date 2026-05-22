@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Retix - Smart inventory, stock management, and distribution intelligence app built for Indian wholesale and retail businesses. Scale your business, manage udhari, automate GST invoicing.">
+    <title>Retix — Smart Inventory & Distribution Intelligence</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Grid Overlay Background -->
+    <div class="grid-overlay"></div>
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-dot"></span>
+                Retix
+            </a>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#how-it-works" class="nav-link">How it Works</a>
+                <a href="#waitlist" class="btn btn-primary btn-nav">Join Waitlist</a>
+            </div>
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav">
+        <a href="#features" class="mobile-nav-link">Features</a>
+        <a href="#how-it-works" class="mobile-nav-link">How it Works</a>
+        <a href="#waitlist" class="btn btn-primary mobile-waitlist-btn">Join Waitlist</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <!-- Background Video -->
+        <div class="hero-video-bg">
+            <video autoplay muted loop playsinline class="video-element">
+                <source src="backgr.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="badge fade-in">
+                    <span class="badge-dot"></span>
+                    Now in Private Beta
+                </div>
+                <h1 class="hero-title fade-in">
+                    Your entire distribution network, <span class="highlight">in one screen.</span>
+                </h1>
+                <p class="hero-subtitle fade-in">
+                    Retix empowers Indian wholesalers, distributors, and retailers with smart real-time stock intelligence, integrated Khata/Udhari tracking, and automated distribution routes.
+                </p>
+                <div class="hero-cta fade-in">
+                    <a href="#waitlist" class="btn btn-primary btn-large">Get Early Access</a>
+                    <span class="cta-note">Join 450+ retail businesses already registered.</span>
+                </div>
+            </div>
+
+            <!-- Hero Live Dashboard Mockup -->
+            <div class="hero-visual fade-in">
+                <div class="dashboard-mockup">
+                    <div class="mockup-header">
+                        <div class="mockup-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="mockup-search">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <span>Search "Tata Salt" or "Fortune Oil"...</span>
+                        </div>
+                        <div class="mockup-user">
+                            <span class="badge-status">Online</span>
+                        </div>
+                    </div>
+                    <div class="mockup-body">
+                        <!-- Left Sidebar -->
+                        <div class="mockup-sidebar">
+                            <div class="sidebar-item active">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                <span>Overview</span>
+                            </div>
+                            <div class="sidebar-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                <span>Inventory</span>
+                            </div>
+                            <div class="sidebar-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                <span>Distributors</span>
+                            </div>
+                            <div class="sidebar-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                <span>Khata Ledger</span>
+                            </div>
+                        </div>
+
+                        <!-- Dashboard Grid Content -->
+                        <div class="mockup-main">
+                            <!-- Top Mini Stats Cards -->
+                            <div class="mockup-stats-grid">
+                                <div class="mini-card highlight-orange">
+                                    <div class="card-label">Active Orders</div>
+                                    <div class="card-value">124</div>
+                                    <div class="card-change rise">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                        +14% today
+                                    </div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="card-label">Udhari Outstanding</div>
+                                    <div class="card-value">₹48,250</div>
+                                    <div class="card-change pending">8 accounts due</div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="card-label">Low Stock Alerts</div>
+                                    <div class="card-value warning">3 Items</div>
+                                    <div class="card-change fall">Immediate action</div>
+                                </div>
+                            </div>
+
+                            <!-- Interactive Inventory & Map Split -->
+                            <div class="mockup-split">
+                                <!-- Inventory Table / Live Feeds -->
+                                <div class="split-left">
+                                    <div class="block-title">Smart Stock Tracker</div>
+                                    <div class="stock-item animate-stock">
+                                        <div class="stock-info">
+                                            <span class="stock-name">Fortune Mustard Oil (1L)</span>
+                                            <span class="stock-sku">SKU: FM-104</span>
+                                        </div>
+                                        <div class="stock-progress">
+                                            <div class="progress-bar orange" style="width: 85%;"></div>
+                                            <span class="stock-qty">170 / 200 tins</span>
+                                        </div>
+                                    </div>
+                                    <div class="stock-item animate-stock">
+                                        <div class="stock-info">
+                                            <span class="stock-name">Tata Salt Lite (1kg)</span>
+                                            <span class="stock-sku">SKU: TS-088</span>
+                                        </div>
+                                        <div class="stock-progress">
+                                            <div class="progress-bar red" style="width: 15%;"></div>
+                                            <span class="stock-qty warning-text">12 / 150 bags</span>
+                                        </div>
+                                    </div>
+                                    <div class="stock-item animate-stock">
+                                        <div class="stock-info">
+                                            <span class="stock-name">Ashirvaad Atta (5kg)</span>
+                                            <span class="stock-sku">SKU: AA-902</span>
+                                        </div>
+                                        <div class="stock-progress">
+                                            <div class="progress-bar orange" style="width: 60%;"></div>
+                                            <span class="stock-qty">90 / 150 bags</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Regional Distribution Map Mockup -->
+                                <div class="split-right">
+                                    <div class="block-title">Area Dispatch Live</div>
+                                    <div class="map-mockup">
+                                        <!-- Simulated nodes with glowing effects -->
+                                        <div class="map-grid"></div>
+                                        <div class="map-node node-1 glow-pulse">
+                                            <div class="tooltip">Gole Market Hub</div>
+                                        </div>
+                                        <div class="map-node node-2 glow-pulse">
+                                            <div class="tooltip">Main Bazar Retailer</div>
+                                        </div>
+                                        <div class="map-node node-3 glow-pulse">
+                                            <div class="tooltip">West Chowk Godown</div>
+                                        </div>
+                                        <!-- Interactive route lines -->
+                                        <svg class="map-route-svg">
+                                            <path d="M40 70 Q 100 50 170 120" stroke="var(--accent-orange)" stroke-width="1.5" fill="none" stroke-dasharray="4,4" class="route-line-1"/>
+                                            <path d="M170 120 Q 210 160 250 80" stroke="var(--primary-dark)" stroke-width="1.5" fill="none" stroke-dasharray="4,4" class="route-line-2"/>
+                                        </svg>
+                                        <div class="live-delivery-tracker">
+                                            <div class="pulse-indicator"></div>
+                                            <span>Tempo TS-04 dispatched to West Chowk</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Strip -->
+    <section id="features" class="features-section">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-sub">Features designed for scale</span>
+                <h2 class="section-title">Built for Indian Kirana & Wholesale Networks</h2>
+                <p class="section-desc">Empower your team with lightning-fast tools designed specifically for local distribution complexities and quick ledger operations.</p>
+            </div>
+            
+            <div class="features-grid">
+                <!-- Feature 1: Stock Tracking -->
+                <div class="feature-card animate-scroll">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                        </svg>
+                    </div>
+                    <h3>Stock Tracking</h3>
+                    <p>Real-time item status with automatic re-order alerts when stocks dip below custom kirana safety margins.</p>
+                    <div class="feature-hover-glow"></div>
+                </div>
+
+                <!-- Feature 2: Udhari/Khata -->
+                <div class="feature-card animate-scroll">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <h3>Udhari/Khata</h3>
+                    <p>Track outstanding store credits, automatically nudge retailers via polite WhatsApp templates, and record payments fast.</p>
+                    <div class="feature-hover-glow"></div>
+                </div>
+
+                <!-- Feature 3: GST Invoicing -->
+                <div class="feature-card animate-scroll">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <h3>GST Invoicing</h3>
+                    <p>Generate clean, professional e-way bills and compliant GST invoices instantly on dispatch or pickup.</p>
+                    <div class="feature-hover-glow"></div>
+                </div>
+
+                <!-- Feature 4: Barcode Input -->
+                <div class="feature-card animate-scroll">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 5v14M21 5v14M7 5v14M17 5v14M12 5v14"></path>
+                            <line x1="2" y1="10" x2="22" y2="10" stroke="var(--accent-orange)"></line>
+                        </svg>
+                    </div>
+                    <h3>Barcode Input</h3>
+                    <p>No expensive laser hardware needed. Use any smartphone camera to check-in boxes and scan out batches rapidly.</p>
+                    <div class="feature-hover-glow"></div>
+                </div>
+
+                <!-- Feature 5: Area Insights -->
+                <div class="feature-card animate-scroll">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                            <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                        </svg>
+                    </div>
+                    <h3>Area Insights</h3>
+                    <p>Identify geographic demand spikes. Know which pin-codes have the fastest stock turnover and allocate smartly.</p>
+                    <div class="feature-hover-glow"></div>
+                </div>
+
+                <!-- Feature 6: Distributor Management -->
+                <div class="feature-card animate-scroll">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <polyline points="16 11 18 13 22 9"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Distributor Flow</h3>
+                    <p>Synchronize your central warehouse with local tempos, delivery agents, and multiple store managers effortlessly.</p>
+                    <div class="feature-hover-glow"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-section">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-sub">Simple, fast onboarding</span>
+                <h2 class="section-title">Streamlining Your Store in 3 Steps</h2>
+                <p class="section-desc">Transitioning to digital inventory shouldn't feel like a chore. Retix is built to feel intuitive from day one.</p>
+            </div>
+
+            <!-- Visual Flow Diagram -->
+            <div class="how-flow">
+                <div class="flow-step animate-scroll">
+                    <div class="step-num">01</div>
+                    <div class="step-card">
+                        <div class="step-icon-wrap">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                        </div>
+                        <h4>Input Stock</h4>
+                        <p>Upload a spreadsheet or use our rapid barcode scanning to list all wholesale batch items in under 10 minutes.</p>
+                    </div>
+                </div>
+
+                <div class="flow-line">
+                    <svg class="line-svg" width="100%" height="40" fill="none">
+                        <path d="M 0,20 Q 50,0 100,20" stroke="#FF6B2B" stroke-width="2" stroke-dasharray="5,5" />
+                    </svg>
+                </div>
+
+                <div class="flow-step animate-scroll" style="transition-delay: 0.1s;">
+                    <div class="step-num">02</div>
+                    <div class="step-card">
+                        <div class="step-icon-wrap">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        </div>
+                        <h4>Get Real-time Insights</h4>
+                        <p>Monitor high-velocity items, watch real-time dispatch routes, and instantly view pending Udhari profiles.</p>
+                    </div>
+                </div>
+
+                <div class="flow-line">
+                    <svg class="line-svg" width="100%" height="40" fill="none">
+                        <path d="M 0,20 Q 50,40 100,20" stroke="#FF6B2B" stroke-width="2" stroke-dasharray="5,5" />
+                    </svg>
+                </div>
+
+                <div class="flow-step animate-scroll" style="transition-delay: 0.2s;">
+                    <div class="step-num">03</div>
+                    <div class="step-card">
+                        <div class="step-icon-wrap">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        </div>
+                        <h4>Take Action</h4>
+                        <p>Fulfill dispatch orders, accept direct UPI payments inside ledger reports, and send automatic restock mandates.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Section -->
+    <section id="waitlist" class="join-section">
+        <div class="section-container">
+            <div class="join-card">
+                <div class="join-grid-decor"></div>
+                <div class="join-content animate-scroll">
+                    <span class="join-badge">LIMITED SLOTS AVAILABLE</span>
+                    <h2>Be the first to try Retix</h2>
+                    <p>Upgrade your local business network. Get custom onboarding templates, zero setup fees, and direct, premium 24/7 technical support from our founding team.</p>
+                    
+                    <form class="join-form" id="waitlistForm">
+                        <div class="input-group">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            <input type="email" id="waitlistEmail" placeholder="Enter your business email address" required aria-label="Business Email">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-submit">
+                            <span>Get Early Access</span>
+                            <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </button>
+                    </form>
+                    
+                    <div class="form-feedback" id="formFeedback"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-dot"></span>
+                        Retix
+                    </a>
+                    <p class="footer-tagline">Fintech meets Kirana Store intelligence. Empowering Indian distribution networks to scale confidently and eliminate inventory blackouts.</p>
+                </div>
+                <div class="footer-links-group">
+                    <div class="footer-col">
+                        <h4>Product</h4>
+                        <a href="#features">Features</a>
+                        <a href="#how-it-works">How it Works</a>
+                        <a href="#waitlist">Waitlist</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Legal</h4>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Contact</h4>
+                        <a href="mailto:hello@retix.in">hello@retix.in</a>
+                        <span class="contact-location">New Delhi, India</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2026 Retix. All rights reserved.</p>
+                <div class="social-icons">
+                    <a href="#" aria-label="Twitter">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+                    </a>
+                    <a href="#" aria-label="LinkedIn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification for Waitlist Success -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <svg class="toast-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div class="toast-message">
+                <span class="toast-title">You're on the list!</span>
+                <span class="toast-desc">We've reserved your early access spot. Check your inbox soon.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="app.js"></script>
+</body>
+</html>
