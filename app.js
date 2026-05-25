@@ -216,6 +216,72 @@ document.addEventListener('DOMContentLoaded', () => {
     if (authCloseBtn) authCloseBtn.addEventListener('click', closeAuthModal);
     if (authModal) authModal.addEventListener('click', (e) => { if (e.target === authModal) closeAuthModal(); });
 
+    // --- Legal Modal Controller ---
+    const legalModal = document.getElementById('legalModal');
+    const privacyLink = document.getElementById('privacyLink');
+    const termsLink = document.getElementById('termsLink');
+    const legalCloseBtn = document.getElementById('legalCloseBtn');
+    const legalCloseBtnSecondary = document.getElementById('legalCloseBtnSecondary');
+    const legalModalTitle = document.getElementById('legalModalTitle');
+    const legalModalContent = document.getElementById('legalModalContent');
+
+    const privacyContent = `
+        <div style="margin-bottom: 8px;">
+            <h4 style="font-weight: 700; color: var(--primary-dark); margin-bottom: 4px;">1. Information We Collect</h4>
+            <p style="color: var(--primary-light); font-size: 0.85rem;">We collect details like your business name, active email, mobile number, and ledger transactions to serve your account correctly.</p>
+        </div>
+        <div style="margin-bottom: 8px;">
+            <h4 style="font-weight: 700; color: var(--primary-dark); margin-bottom: 4px;">2. Security & Databases</h4>
+            <p style="color: var(--primary-light); font-size: 0.85rem;">Your business records and Udhari data are stored securely inside our dedicated Supabase PostgreSQL servers with strict data-isolation rules (RLS).</p>
+        </div>
+        <div style="margin-bottom: 8px;">
+            <h4 style="font-weight: 700; color: var(--primary-dark); margin-bottom: 4px;">3. Data Sharing & Protection</h4>
+            <p style="color: var(--primary-light); font-size: 0.85rem;">We do not rent or sell your commercial details, transactions, or contacts to anyone. Data is purely utilized to compute your analytics panels.</p>
+        </div>
+    `;
+
+    const termsContent = `
+        <div style="margin-bottom: 8px;">
+            <h4 style="font-weight: 700; color: var(--primary-dark); margin-bottom: 4px;">1. Service Description</h4>
+            <p style="color: var(--primary-light); font-size: 0.85rem;">Retix provides online ledger (Khata), smart inventory tracker, and order monitoring systems to Kirana and distributor nodes.</p>
+        </div>
+        <div style="margin-bottom: 8px;">
+            <h4 style="font-weight: 700; color: var(--primary-dark); margin-bottom: 4px;">2. Responsible Communication</h4>
+            <p style="color: var(--primary-light); font-size: 0.85rem;">Our simulated WhatsApp ledger nudges must only be sent to legitimate retail agents or distributors. Misuse or spamming of notification features is strictly prohibited.</p>
+        </div>
+        <div style="margin-bottom: 8px;">
+            <h4 style="font-weight: 700; color: var(--primary-dark); margin-bottom: 4px;">3. Limited Liability</h4>
+            <p style="color: var(--primary-light); font-size: 0.85rem;">Retix is provided "as is" during this initial beta validation phase. We advise downloading copy snapshots of your records periodically.</p>
+        </div>
+    `;
+
+    const openLegalModal = (type = 'privacy') => {
+        if (type === 'privacy') {
+            if (legalModalTitle) legalModalTitle.textContent = 'Privacy Policy';
+            if (legalModalContent) legalModalContent.innerHTML = privacyContent;
+        } else {
+            if (legalModalTitle) legalModalTitle.textContent = 'Terms & Conditions';
+            if (legalModalContent) legalModalContent.innerHTML = termsContent;
+        }
+        if (legalModal) {
+            legalModal.classList.add('active');
+            document.body.classList.add('no-scroll');
+        }
+    };
+
+    const closeLegalModal = () => {
+        if (legalModal) {
+            legalModal.classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        }
+    };
+
+    if (privacyLink) privacyLink.addEventListener('click', (e) => { e.preventDefault(); openLegalModal('privacy'); });
+    if (termsLink) termsLink.addEventListener('click', (e) => { e.preventDefault(); openLegalModal('terms'); });
+    if (legalCloseBtn) legalCloseBtn.addEventListener('click', closeLegalModal);
+    if (legalCloseBtnSecondary) legalCloseBtnSecondary.addEventListener('click', closeLegalModal);
+    if (legalModal) legalModal.addEventListener('click', (e) => { if (e.target === legalModal) closeLegalModal(); });
+
     // Registration Handler
     if (dbRegisterForm) {
         dbRegisterForm.addEventListener('submit', async (e) => {

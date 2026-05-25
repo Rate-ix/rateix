@@ -567,13 +567,13 @@
                     </div>
                     <div class="footer-col">
                         <h4>Legal</h4>
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Terms of Service</a>
+                        <a href="#" id="privacyLink">Privacy Policy</a>
+                        <a href="#" id="termsLink">Terms of Service</a>
                     </div>
                     <div class="footer-col">
                         <h4>Contact</h4>
                         <a href="mailto:hello@retix.in">hello@retix.in</a>
-                        <span class="contact-location">New Delhi, India</span>
+                        <span class="contact-location" style="font-size: 0.82rem; color: var(--primary-light);">New Delhi, India</span>
                     </div>
                 </div>
             </div>
@@ -655,11 +655,27 @@
                     <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; margin-top: 4px;">Secure Login</button>
                     <p style="text-align: center; font-size: 0.85rem; margin-top: 12px; color: var(--primary-light);">Don't have an account? <a href="#" id="switchToRegister" style="color: var(--accent-orange); font-weight: 700; text-decoration: none;">Register here</a></p>
                 </form>
-
             </div>
             
             <div class="auth-modal-footer">
                 <p>&copy; 2026 Retix App. Secure B2B Single Sign-On.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal Modal (Privacy & Terms) -->
+    <div class="auth-modal-overlay" id="legalModal">
+        <div class="auth-modal-card" style="max-width: 520px; max-height: 85vh; overflow-y: auto;">
+            <button class="auth-modal-close" id="legalCloseBtn" aria-label="Close">&times;</button>
+            <div class="auth-modal-header" style="text-align: left; margin-bottom: 20px;">
+                <h3 id="legalModalTitle">Privacy Policy</h3>
+                <p id="legalModalSubtitle" style="font-size: 0.8rem; color: var(--primary-light);">Last updated: May 2026</p>
+            </div>
+            <div id="legalModalContent" style="font-size: 0.9rem; color: var(--primary-dark); line-height: 1.6; display: flex; flex-direction: column; gap: 16px; text-align: left;">
+                <!-- Content will be injected dynamically -->
+            </div>
+            <div style="margin-top: 24px; text-align: right; border-top: 1px dashed var(--border-medium); padding-top: 16px;">
+                <button class="btn btn-primary" id="legalCloseBtnSecondary" style="padding: 10px 22px; font-size: 0.9rem; border-radius: 10px;">I Understand</button>
             </div>
         </div>
     </div>
