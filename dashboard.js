@@ -34,6 +34,13 @@ function nav(section){
   const t=titles[section];
   document.getElementById('pageTitle').textContent=t[0];
   document.getElementById('pageSub').textContent=t[1];
+  
+  // Auto-close mobile sidebar and hide overlay on nav switch
+  const sidebar = document.getElementById('dashboardSidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
+  
   if(section==='orders')loadOrders();
   if(section==='inventory')loadInventory();
   if(section==='distributors')loadDistributors();
@@ -307,6 +314,34 @@ window.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('sbName').textContent=name;
   document.getElementById('sbInit').textContent=name[0].toUpperCase();
   document.getElementById('topName').textContent=first;
+  
+  // Mobile Sidebar Toggle and Listeners
+  const sidebar = document.getElementById('dashboardSidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const mobileToggle = document.getElementById('mobileToggle');
+  const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+
+  if (mobileToggle) {
+    mobileToggle.addEventListener('click', () => {
+      if (sidebar) sidebar.classList.add('active');
+      if (overlay) overlay.classList.add('active');
+    });
+  }
+
+  if (sidebarCloseBtn) {
+    sidebarCloseBtn.addEventListener('click', () => {
+      if (sidebar) sidebar.classList.remove('active');
+      if (overlay) overlay.classList.remove('active');
+    });
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', () => {
+      if (sidebar) sidebar.classList.remove('active');
+      if (overlay) overlay.classList.remove('active');
+    });
+  }
+
   document.getElementById('dashLogout').addEventListener('click',async()=>{
     await sb.auth.signOut();
     window.location.href='index.html';

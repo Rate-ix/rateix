@@ -11,18 +11,24 @@
 </head>
 <body>
 
+<!-- Sidebar mobile overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <!-- SIDEBAR -->
-<aside class="sidebar">
+<aside class="sidebar" id="dashboardSidebar">
   <div class="sb-logo">
-    <div class="sb-logo-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-      </svg>
+    <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+      <div class="sb-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Retix</h1>
+        <span>B2B intelligence</span>
+      </div>
     </div>
-    <div>
-      <h1>Retix</h1>
-      <span>B2B intelligence</span>
-    </div>
+    <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close Sidebar">&times;</button>
   </div>
   
   <div class="sb-user">
@@ -88,9 +94,16 @@
 <main class="main">
   <!-- Topbar -->
   <div class="topbar">
-    <div class="topbar-left">
-      <div class="page-title" id="pageTitle">Overview</div>
-      <div class="page-sub" id="pageSub">Real-time enterprise metrics & analytics</div>
+    <div class="topbar-left" style="display: flex; align-items: center; gap: 16px;">
+      <button class="mobile-toggle-btn" id="mobileToggle" aria-label="Toggle Sidebar">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+      <div>
+        <div class="page-title" id="pageTitle">Overview</div>
+        <div class="page-sub" id="pageSub">Real-time enterprise metrics & analytics</div>
+      </div>
     </div>
     <div class="topbar-right">
       <div class="greeting-pill">

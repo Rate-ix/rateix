@@ -944,22 +944,174 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* RESPONSIVE STYLES */
-@media(max-width: 980px) {
-  .sidebar { width: 72px; }
-  .sb-logo-icon { margin: 0 auto; }
-  .sb-logo h1, .sb-logo span, .sb-uname, .sb-role, .sb-label, .nav-item span, .sb-bottom span { display: none; }
-  .main { margin-left: 72px; }
-  .stats-container { grid-template-columns: repeat(2, 1fr); }
-  .services-grid { grid-template-columns: repeat(2, 1fr); }
-  .content { padding: 24px; }
+/* RESPONSIVE STYLES & MOBILE OVERHAUL */
+.mobile-toggle-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 6px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  transition: var(--transition);
 }
 
-@media(max-width: 640px) {
-  .stats-container { grid-template-columns: 1fr; }
-  .services-grid { grid-template-columns: 1fr; }
-  .khata-summary { grid-template-columns: 1fr; }
-  .form-row { grid-template-columns: 1fr; }
-  .topbar { padding: 16px 20px; }
-  .content { padding: 16px; }
+.mobile-toggle-btn:hover {
+  background-color: var(--color-bg);
+}
+
+.mobile-toggle-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.sidebar-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: var(--transition);
+}
+
+.sidebar-close-btn:hover {
+  opacity: 1;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
+  pointer-events: all;
+}
+
+@media (max-width: 992px) {
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Mobile Sidebar Drawer System */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: -270px;
+    width: 270px;
+    height: 100vh;
+    z-index: 999;
+    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .sidebar.active {
+    left: 0;
+  }
+  
+  .sidebar-close-btn {
+    display: flex;
+  }
+  
+  .mobile-toggle-btn {
+    display: flex;
+  }
+  
+  .main {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .topbar {
+    padding: 14px 16px;
+    position: sticky;
+    top: 0;
+  }
+  
+  .page-title {
+    font-size: 1.25rem;
+  }
+  
+  .page-sub {
+    font-size: 0.75rem;
+  }
+  
+  .content {
+    padding: 16px;
+  }
+  
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .khata-summary {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  
+  /* Tables safe touch overflow scroll */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tbl {
+    width: 100%;
+    min-width: 600px; /* Keep tabular hierarchy neat, forcing scroll on small widths instead of squishing columns */
+  }
+  
+  .tbl th, .tbl td {
+    padding: 12px 16px;
+  }
+  
+  /* Modal responsive scale */
+  .modal-card {
+    padding: 24px 16px;
+    margin: 12px;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.2rem;
+  }
 }
