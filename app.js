@@ -374,15 +374,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const user = session ? session.user : null;
 
             if (user) {
-                if (unauthNavGroup) unauthNavGroup.style.display = 'none';
-                if (unauthMobileGroup) unauthMobileGroup.style.display = 'none';
-                if (authNavGroup) authNavGroup.style.display = 'flex';
-                if (authMobileGroup) authMobileGroup.style.display = 'flex';
-
-                const userNameStr = user.user_metadata?.full_name || 'User';
-                if (navUserName) navUserName.textContent = userNameStr.split(' ')[0];
-                if (mobileUserName) mobileUserName.textContent = userNameStr;
-                if (navUserInitials) navUserInitials.textContent = userNameStr.charAt(0).toUpperCase();
+                // Securely redirect already logged in users to the premium dashboard
+                window.location.replace('dashboard.html');
+                return;
             } else {
                 if (unauthNavGroup) unauthNavGroup.style.display = 'flex';
                 if (unauthMobileGroup) unauthMobileGroup.style.display = 'flex';
