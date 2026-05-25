@@ -9,7 +9,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Stylesheet -->
     <link rel="stylesheet" href="styles.css">
@@ -86,7 +86,12 @@
                         Now in Private Beta
                     </div>
                     <div class="badge badge-india">
-                        <span class="flag-emoji">🇮🇳</span>
+                        <svg class="india-mini-flag" viewBox="0 0 3 2" width="16" height="11" style="display:inline-block; border-radius:1px; margin-right:6px; vertical-align:middle; box-shadow:0 1px 2px rgba(0,0,0,0.15)">
+                            <rect width="3" height="2" fill="#059669"/>
+                            <rect width="3" height="1.33" fill="#FFF"/>
+                            <rect width="3" height="0.67" fill="#FF6B2B"/>
+                            <circle cx="1.5" cy="1" r="0.2" fill="#000080"/>
+                        </svg>
                         Made in India
                     </div>
                 </div>
@@ -544,7 +549,12 @@
                     </a>
                     <p class="footer-tagline">Fintech meets Kirana Store intelligence. Empowering Indian distribution networks to scale confidently and eliminate inventory blackouts.</p>
                     <div class="made-in-india-footer">
-                        <span class="flag-emoji">🇮🇳</span>
+                        <svg class="india-mini-flag" viewBox="0 0 3 2" width="16" height="11" style="display:inline-block; border-radius:1px; margin-right:6px; vertical-align:middle; box-shadow:0 1px 2px rgba(0,0,0,0.15)">
+                            <rect width="3" height="2" fill="#059669"/>
+                            <rect width="3" height="1.33" fill="#FFF"/>
+                            <rect width="3" height="0.67" fill="#FF6B2B"/>
+                            <circle cx="1.5" cy="1" r="0.2" fill="#000080"/>
+                        </svg>
                         <span>Made in India</span>
                     </div>
                 </div>
@@ -587,9 +597,21 @@
         <div class="auth-modal-card" style="max-height: 90vh; overflow-y: auto;">
             <button class="auth-modal-close" id="authCloseBtn" aria-label="Close">&times;</button>
             <div class="auth-modal-header">
-                <span class="flag-emoji-large">🇮🇳</span>
+                <div class="india-emblem-large" style="display:flex; justify-content:center; margin-bottom:16px;">
+                    <svg viewBox="0 0 100 100" width="48" height="48" style="filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1))">
+                        <circle cx="50" cy="50" r="48" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                        <path d="M50,2 A48,48 0 0,1 98,50 L50,50 Z" fill="#FF6B2B" transform="rotate(-150 50 50)"/>
+                        <path d="M50,2 A48,48 0 0,1 98,50 L50,50 Z" fill="#059669" transform="rotate(90 50 50)"/>
+                        <path d="M50,2 A48,48 0 0,1 98,50 L50,50 Z" fill="#FFF" transform="rotate(-30 50 50)"/>
+                        <circle cx="50" cy="50" r="10" fill="none" stroke="#000080" stroke-width="1.5"/>
+                        <line x1="50" y1="40" x2="50" y2="60" stroke="#000080" stroke-width="1"/>
+                        <line x1="40" y1="50" x2="60" y2="50" stroke="#000080" stroke-width="1"/>
+                        <line x1="43" y1="43" x2="57" y2="57" stroke="#000080" stroke-width="0.8"/>
+                        <line x1="43" y1="57" x2="57" y2="43" stroke="#000080" stroke-width="0.8"/>
+                    </svg>
+                </div>
                 <h3 id="authModalTitle">Welcome to Retix</h3>
-                <p id="authModalSubtitle">🇮🇳 Made in India</p>
+                <p id="authModalSubtitle">Enterprise Distribution Platform</p>
             </div>
             
             <!-- Functional Database Auth Forms -->

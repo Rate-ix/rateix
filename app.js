@@ -1,4 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 0. Force Play background video on mobile devices (bypasses battery saver & strict policies)
+    const bgVideo = document.querySelector('.video-element');
+    if (bgVideo) {
+        bgVideo.muted = true;
+        bgVideo.playsInline = true;
+        bgVideo.setAttribute('muted', '');
+        bgVideo.setAttribute('playsinline', '');
+        const playPromise = bgVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                const forcePlay = () => {
+                    bgVideo.play();
+                    document.removeEventListener('click', forcePlay);
+                    document.removeEventListener('touchstart', forcePlay);
+                };
+                document.addEventListener('click', forcePlay);
+                document.addEventListener('touchstart', forcePlay);
+            });
+        }
+    }
+
     // 1. Navbar Scroll State Management
     const navbar = document.querySelector('.navbar');
     window.addEventListener('scroll', () => {
