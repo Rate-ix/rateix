@@ -2815,3 +2815,99 @@ body {
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
 }
+
+/* ==========================================================================
+   BLACK & WHITE PROFESSIONAL LEGAL MODAL (MOBILE FRIENDLY)
+   ========================================================================== */
+#legalModal .auth-modal-card {
+    background-color: #FFFFFF !important;
+    border: 2px solid #000000 !important;
+    border-radius: 16px !important;
+    color: #000000 !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2) !important;
+    padding: 36px 28px !important;
+    width: 100% !important;
+    max-width: 520px !important;
+}
+
+#legalModal h3 {
+    font-family: var(--font-display) !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+    font-size: 1.7rem !important;
+    margin-bottom: 4px !important;
+    letter-spacing: -0.5px !important;
+}
+
+#legalModal h4 {
+    font-family: var(--font-body) !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    margin-top: 4px !important;
+}
+
+#legalModal p {
+    color: #2D3748 !important;
+    font-size: 0.85rem !important;
+    line-height: 1.5 !important;
+}
+
+#legalModal .auth-modal-close {
+    color: #000000 !important;
+    border: 1px solid rgba(0,0,0,0.15) !important;
+    background-color: #FFFFFF !important;
+    font-weight: 600 !important;
+}
+
+#legalModal .auth-modal-close:hover {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+    border-color: #000000 !important;
+}
+
+#legalModal .btn-primary {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+    border: 2px solid #000000 !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    transition: var(--transition-fast) !important;
+    box-shadow: none !important;
+}
+
+#legalModal .btn-primary:hover {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    transform: none !important;
+}
+
+/* Specific Legal Mobile Styling Overlay Override */
+@media (max-width: 480px) {
+    #legalModal {
+        padding: 12px !important;
+    }
+    
+    #legalModal .auth-modal-card {
+        padding: 24px 16px !important;
+        border-radius: 12px !important;
+        width: 100% !important;
+        max-height: 90vh !important;
+    }
+    
+    #legalModal h3 {
+        font-size: 1.35rem !important;
+    }
+    
+    #legalModalContent {
+        gap: 12px !important;
+    }
+    
+    #legalModal p {
+        font-size: 0.8rem !important;
+        line-height: 1.45 !important;
+    }
+}
+
+
