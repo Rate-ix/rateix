@@ -618,25 +618,51 @@
             <div class="db-auth-forms" id="dbAuthFormsContainer">
                 
                 <!-- Registration Form -->
-                <form id="dbRegisterForm" class="db-form" style="display:none;">
+                <form id="dbRegisterForm" class="db-form" style="display:none; flex-direction:column; gap:12px;">
                     <div class="form-group">
                         <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Full Name</label>
-                        <input type="text" id="regName" placeholder="Enter your full name" required style="width: 100%; padding: 12px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                        <input type="text" id="regName" placeholder="Enter your full name" required style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                    </div>
+                    <div class="form-row-two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Shop / Business Name</label>
+                            <input type="text" id="regShopName" placeholder="e.g. Gupta Wholesale Kirana" required style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">GSTIN (GST Number)</label>
+                            <input type="text" id="regGstin" placeholder="e.g. 07AAAAA1111A1Z1" maxlength="15" style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box; text-transform: uppercase;">
+                        </div>
+                    </div>
+                    <div class="form-row-two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Email Address</label>
+                            <input type="email" id="regEmail" placeholder="business@example.com" required style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Mobile Number</label>
+                            <input type="tel" id="regPhone" placeholder="10-digit mobile number" maxlength="10" required style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                        </div>
+                    </div>
+                    <div class="form-row-two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Business Type</label>
+                            <select id="regBusinessType" required style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box; background: white;">
+                                <option value="Retailer">Retailer (Kirana Store)</option>
+                                <option value="Wholesaler">Wholesaler / Trader</option>
+                                <option value="Distributor">Distributor / Logistics</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Password</label>
+                            <input type="password" id="regPassword" placeholder="Create secure password" required minlength="6" style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Email Address</label>
-                        <input type="email" id="regEmail" placeholder="business@example.com" required style="width: 100%; padding: 12px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Shop Address</label>
+                        <textarea id="regShopAddress" placeholder="Enter complete business location address" required style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box; resize: vertical; min-height: 50px;"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Mobile Number</label>
-                        <input type="tel" id="regPhone" placeholder="10-digit mobile number" maxlength="10" required style="width: 100%; padding: 12px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
-                    </div>
-                    <div class="form-group">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Password</label>
-                        <input type="password" id="regPassword" placeholder="Create a secure password (min 6 chars)" required minlength="6" style="width: 100%; padding: 12px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; margin-top: 8px;">Create Account</button>
-                    <p style="text-align: center; font-size: 0.85rem; margin-top: 12px; color: var(--primary-light);">Already have an account? <a href="#" id="switchToLogin" style="color: var(--accent-orange); font-weight: 700; text-decoration: none;">Login here</a></p>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 4px;">Create Account</button>
+                    <p style="text-align: center; font-size: 0.82rem; margin-top: 10px; color: var(--primary-light);">Already have an account? <a href="#" id="switchToLogin" style="color: var(--accent-orange); font-weight: 700; text-decoration: none;">Login here</a></p>
                 </form>
 
                 <!-- Login Form -->

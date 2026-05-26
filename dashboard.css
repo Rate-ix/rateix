@@ -1115,3 +1115,16 @@ body {
     font-size: 1.2rem;
   }
 }
+
+/* AI Smart Vision Laser Scanning & Alert animations */
+@keyframes scanLaser {
+  0% { top: 0%; opacity: 0.8; }
+  50% { top: 98%; opacity: 0.8; }
+  100% { top: 0%; opacity: 0.8; }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}

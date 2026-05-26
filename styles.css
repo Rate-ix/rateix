@@ -2790,14 +2790,37 @@ body {
         font-size: 1.2rem;
     }
     
-    /* Form Scale */
+    /* Form Scale & Mobile Overflows */
+    .auth-modal-overlay {
+        padding: 12px !important;
+    }
+    
     .auth-modal-card {
-        padding: 30px 20px;
-        border-radius: 24px;
+        padding: 36px 20px 24px !important;
+        border-radius: 20px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-y: auto !important;
+    }
+    
+    .db-form, .db-auth-forms {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .auth-modal-close {
+        top: 16px !important;
+        right: 16px !important;
     }
     
     .auth-modal-header h3 {
-        font-size: 1.4rem;
+        font-size: 1.3rem !important;
+        line-height: 1.3 !important;
+    }
+
+    .auth-modal-header p {
+        font-size: 0.8rem !important;
     }
 }
 

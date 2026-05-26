@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (dbLoginForm) { dbLoginForm.style.display = 'flex'; dbLoginForm.style.flexDirection = 'column'; dbLoginForm.style.gap = '14px'; }
         } else {
             titleEl.textContent = 'Create Your Retix Account';
-            subEl.textContent = '🇮🇳 Made in India — Join thousands of businesses';
+            subEl.innerHTML = `<span style="display:inline-flex; align-items:center; gap:6px; justify-content:center;"><svg class="india-mini-flag" viewBox="0 0 3 2" width="16" height="11" style="border-radius:1px; box-shadow:0 1px 2px rgba(0,0,0,0.15); flex-shrink:0;"><rect width="3" height="2" fill="#059669"/><rect width="3" height="1.33" fill="#FFF"/><rect width="3" height="0.67" fill="#FF6B2B"/><circle cx="1.5" cy="1" r="0.2" fill="#000080"/></svg> Made in India — Join thousands of businesses</span>`;
             if (dbLoginForm) dbLoginForm.style.display = 'none';
             if (dbRegisterForm) { dbRegisterForm.style.display = 'flex'; dbRegisterForm.style.flexDirection = 'column'; dbRegisterForm.style.gap = '14px'; }
         }
@@ -290,13 +290,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             const name = document.getElementById('regName').value.trim();
+            const shopName = document.getElementById('regShopName').value.trim();
+            const gstin = document.getElementById('regGstin').value.trim().toUpperCase();
             const email = document.getElementById('regEmail').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
+            const businessType = document.getElementById('regBusinessType').value;
             const password = document.getElementById('regPassword').value;
+            const shopAddress = document.getElementById('regShopAddress').value.trim();
 
             // Validations
             if (!name) {
                 launchToast('Missing Name', 'Please enter your full name.', 'error');
+                return;
+            }
+            if (!shopName) {
+                launchToast('Missing Shop Name', 'Please enter your shop/business name.', 'error');
+                return;
+            }
+            if (gstin && gstin.length !== 15) {
+                launchToast('Invalid GSTIN', 'GSTIN must be exactly 15 characters.', 'error');
                 return;
             }
             if (!email || !email.includes('@')) {
@@ -311,6 +323,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 launchToast('Weak Password', 'Password must be at least 6 characters long.', 'error');
                 return;
             }
+            if (!shopAddress) {
+                launchToast('Missing Address', 'Please enter your shop/business address.', 'error');
+                return;
+            }
 
             // Show loading state on button
             const submitBtn = dbRegisterForm.querySelector('button[type="submit"]');
@@ -323,7 +339,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     email: email,
                     password: password,
                     options: {
-                        data: { full_name: name, phone: phone }
+                        data: { 
+                            full_name: name, 
+                            phone: phone,
+                            shop_name: shopName,
+                            gstin: gstin,
+                            business_type: businessType,
+                            shop_address: shopAddress
+                        }
                     }
                 });
 
@@ -340,7 +363,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             id: data.user.id,
                             full_name: name,
                             email: email,
-                            phone: phone
+                            phone: phone,
+                            shop_name: shopName,
+                            gstin: gstin,
+                            business_type: businessType,
+                            shop_address: shopAddress
                         });
 
                     if (profileError) {
@@ -350,8 +377,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Success — redirect to dashboard
-                launchToast('Account Created! 🎉', `Welcome, ${name}! Taking you to your dashboard...`, 'success');
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+                if (data.user && !data.session) {
+                    launchToast('Check Your Inbox! 📧', `Account created! Please click the confirmation link sent to ${email} to activate your account.`, 'success');
+                    dbRegisterForm.reset();
+                    setTimeout(() => { openAuthModal('login'); }, 4000);
+                } else {
+                    launchToast('Account Created! 🎉', `Welcome, ${name}! Taking you to your dashboard...`, 'success');
+                    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+                }
 
             } catch (err) {
                 launchToast('Unexpected Error', 'Something went wrong. Please try again.', 'error');

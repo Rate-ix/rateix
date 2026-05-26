@@ -78,6 +78,14 @@
       </svg>
       <span>Khata Book</span>
     </button>
+
+    <button class="nav-item" id="nav-vision" onclick="nav('vision')">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+      </svg>
+      <span>AI Smart Vision</span>
+    </button>
   </nav>
 
   <div class="sb-bottom">
@@ -192,6 +200,17 @@
         <span class="sec-title">Enterprise Dashboard Services</span>
       </div>
       
+      <!-- Smart Alerts & Insights Panel -->
+      <div class="smart-alerts-panel" id="smartAlertsContainer" style="display: none; margin-bottom: 24px; padding: 20px; background: #fffbeb; border: 1px solid #fef3c7; border-left: 5px solid var(--color-brand); border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+        <h4 style="font-family: var(--font-title); color: var(--color-brand-hover); font-size: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="18" height="18" style="color: var(--color-brand);"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          Smart Business Alerts
+        </h4>
+        <ul id="alertList" style="list-style-type: none; font-size: 0.88rem; color: var(--color-text); display: flex; flex-direction: column; gap: 8px;">
+          <!-- Alerts dynamically inserted here -->
+        </ul>
+      </div>
+      
       <div class="services-grid">
         <div class="service-card" onclick="nav('orders')">
           <div class="service-card-header">
@@ -261,17 +280,22 @@
           </div>
         </div>
 
-        <div class="service-card disabled-service">
+        <div class="service-card" onclick="nav('vision')">
           <div class="service-card-header">
-            <div class="service-icon icon-muted">
+            <div class="service-icon icon-indigo" style="background: rgba(99, 102, 241, 0.08); color: rgb(99, 102, 241);">
               <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"/>
+                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
               </svg>
             </div>
-            <div class="service-status-pill">Soon</div>
+            <div class="service-status-pill" style="background: var(--color-brand-glow); color: var(--color-brand); font-weight: 800;">ACTIVE</div>
           </div>
-          <h3>AI Business Analytics</h3>
-          <p>Predict supply demands, analyze margins, dynamic pricing charts and insights.</p>
+          <h3>AI Smart Vision</h3>
+          <p>Scan shelves, track customer dwell-time, analyze item picking, and automatically detect theft.</p>
+          <div class="service-card-action">
+            <span>Activate scan</span>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+          </div>
         </div>
 
         <div class="service-card disabled-service">
@@ -455,6 +479,97 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- AI SMART VISION SECTION -->
+    <div class="section" id="sec-vision">
+      <div class="sec-head">
+        <span class="sec-title">AI Smart Camera Vision & Theft Prevention</span>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span id="vision-status" class="badge out" style="display: inline-flex; align-items: center; gap: 6px;">Camera Inactive</span>
+          <button class="btn-add" id="toggleCameraBtn" onclick="toggleCamera()" style="background-color: var(--color-brand); border: none; cursor: pointer;">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            <span>Activate AI Camera</span>
+          </button>
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; margin-top: 20px;">
+        <!-- Left Column: Video Feed & Real-time Scan Overlay -->
+        <div class="table-container" style="padding: 24px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); position: relative; min-height: 420px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-md);">
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <span id="liveFeedPill" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: #ef4444; display: inline-block;"></span>
+              Live Feed
+            </span>
+            <span style="background: rgba(255, 255, 255, 0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600;">AIShield v2.4</span>
+          </div>
+          
+          <!-- Video Container -->
+          <div id="videoContainer" style="width: 100%; height: 350px; background: #020617; border-radius: var(--radius-md); overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.05);">
+            <!-- Real HTML5 Video element used if camera activated -->
+            <video id="webcamVideo" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; display: none; transform: scaleX(-1);"></video>
+            
+            <!-- Dynamic Canvas Overlay for mock Bounding Boxes -->
+            <canvas id="visionOverlayCanvas" width="600" height="350" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;"></canvas>
+            
+            <!-- Inactive State UI -->
+            <div id="cameraInactiveUI" style="text-align: center; color: #94a3b8; padding: 40px; z-index: 4;">
+              <div style="background: #1e293b; color: #64748b; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="28" height="28"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              </div>
+              <h3 style="color: #f1f5f9; font-size: 1.1rem; margin-bottom: 6px; font-family: var(--font-title);">AI Anti-Theft Scanner Offline</h3>
+              <p style="font-size: 0.8rem; max-width: 340px; margin: 0 auto 20px; line-height: 1.4;">Activate your webcam device to initiate real-time behavioral tracking, pose parsing, and item picker detection.</p>
+              <button class="btn-add" onclick="toggleCamera()" style="margin: 0 auto; padding: 10px 20px; font-size: 0.82rem; background: var(--color-brand); border: none; cursor: pointer;">Initialize Camera</button>
+            </div>
+            
+            <!-- Mock Laser Scanner line -->
+            <div id="laserScanner" style="display: none; position: absolute; left: 0; width: 100%; height: 3px; background: linear-gradient(to right, transparent, var(--color-brand), transparent); box-shadow: 0 0 10px var(--color-brand); z-index: 6; animation: scanLaser 4s ease-in-out infinite;"></div>
+          </div>
+          
+          <!-- Trigger simulation alert button -->
+          <div style="display: flex; gap: 16px; width: 100%; margin-top: 16px; justify-content: space-between; align-items: center;">
+            <p style="font-size: 0.72rem; color: #64748b; margin: 0;">* Note: Camera streams are processed locally on your device using browser edge models to maintain consumer privacy.</p>
+            <button id="triggerMockAlertBtn" class="btn-del" onclick="triggerMockAlert()" disabled style="padding: 8px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-weight: 700; font-size: 0.8rem; cursor: not-allowed; border-radius: var(--radius-sm);">
+              Simulate Suspicious Grab
+            </button>
+          </div>
+        </div>
+        
+        <!-- Right Column: Real-time Incident Analytics & Log -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- Security Stats Panel -->
+          <div class="table-container" style="padding: 20px; background: #fff; box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); border-radius: var(--radius-lg);">
+            <h4 style="font-family: var(--font-title); font-size: 0.95rem; margin-bottom: 14px; border-bottom: 1px solid var(--color-border); padding-bottom: 8px; color: var(--color-text);">Incident Analytics</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div style="padding: 12px; background: #f8fafc; border-radius: var(--radius-md); text-align: center;">
+                <span style="font-size: 0.68rem; text-transform: uppercase; color: var(--color-muted); font-weight: 700;">Scanning Area</span>
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--color-text); margin-top: 2px;">Zone A (Shelf)</div>
+              </div>
+              <div style="padding: 12px; background: #f8fafc; border-radius: var(--radius-md); text-align: center;">
+                <span style="font-size: 0.68rem; text-transform: uppercase; color: var(--color-muted); font-weight: 700;">Tracked People</span>
+                <div id="vision-tracked-count" style="font-size: 1.15rem; font-weight: 800; color: var(--color-text); margin-top: 2px;">0</div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 16px; padding: 12px; background: var(--color-success-bg); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.78rem; font-weight: 600; color: var(--color-success); display: flex; align-items: center; gap: 6px;">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-success); display: inline-block;"></span>
+                AI Core Security Shield
+              </span>
+              <span style="font-size: 0.72rem; font-weight: 700; color: var(--color-success);">ACTIVE</span>
+            </div>
+          </div>
+          
+          <!-- Live Activity Log -->
+          <div class="table-container" style="padding: 20px; background: #fff; box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); border-radius: var(--radius-lg); flex: 1; display: flex; flex-direction: column;">
+            <h4 style="font-family: var(--font-title); font-size: 0.95rem; margin-bottom: 12px; border-bottom: 1px solid var(--color-border); padding-bottom: 8px; color: var(--color-text);">Real-Time Scanner Log</h4>
+            <div id="visionActivityLog" style="font-size: 0.8rem; line-height: 1.6; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 250px; min-height: 180px; color: var(--color-text);">
+              <div style="color: var(--color-muted); font-style: italic;">No active camera logs...</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
