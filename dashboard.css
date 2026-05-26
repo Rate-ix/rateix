@@ -1128,3 +1128,138 @@ body {
   70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
   100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
+
+/* print layout optimization to isolate carbon invoice book sheet */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #modal-invoice, #modal-invoice * {
+    visibility: visible !important;
+  }
+  #modal-invoice {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+  #modal-invoice .modal-card {
+    background: #ffffff !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .invoice-actions {
+    display: none !important;
+  }
+  #invoiceCarbonPaper {
+    border: 2px solid #000000 !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 10px !important;
+  }
+}
+
+/* Eco-Ink Saver Mode styling overrides — ZERO LINES Ultra Minimal Receipt Mode */
+.eco-mode {
+  background: #ffffff !important;
+  color: #000000 !important;
+  padding: 10px !important;
+  border: none !important;
+}
+.eco-mode * {
+  font-family: 'Courier New', Courier, monospace !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  font-weight: 500 !important;
+}
+.eco-mode h1 {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  margin: 0 !important;
+  border: none !important;
+}
+.eco-mode #invoiceCarbonPaper,
+.eco-mode #invoiceCarbonPaper .inv-inner-border {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.eco-mode .inv-header-block {
+  border: none !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 8px !important;
+}
+.eco-mode .inv-no-box {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.eco-mode .inv-cust-box {
+  border: none !important;
+  margin-bottom: 8px !important;
+}
+.eco-mode .inv-cust-row {
+  border: none !important;
+  padding: 2px 0 !important;
+}
+.eco-mode .inv-cust-row span {
+  border: none !important;
+  padding: 0 !important;
+}
+.eco-mode .inv-table-outer {
+  border: none !important;
+  margin-bottom: 8px !important;
+}
+.eco-mode table {
+  border: none !important;
+  width: 100% !important;
+}
+.eco-mode th {
+  background: transparent !important;
+  border: none !important;
+  color: #000000 !important;
+  padding: 4px 0 !important;
+  font-weight: 700 !important;
+}
+.eco-mode td {
+  border: none !important;
+  color: #000000 !important;
+  padding: 4px 0 !important;
+}
+.eco-mode tr {
+  border: none !important;
+}
+.eco-mode .inv-footer-sec {
+  border: none !important;
+  padding-top: 4px !important;
+}
+.eco-mode #invTotalAmt {
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+.eco-mode .inv-total-display {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.eco-mode .eco-hide {
+  display: none !important;
+}

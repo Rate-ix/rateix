@@ -3,6 +3,8 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const sb=window.supabase.createClient(SB_URL,SB_KEY);
 
 let currentUser=null;
+let isEcoMode=false;
+let activeInvoiceOrderId=null;
 
 // TOAST SYSTEM
 function toast(title,msg,err=false){
@@ -93,9 +95,9 @@ async function loadOverview(){
   const idata=inventoryRes.data||[];
   idata.forEach(item=>{
     if(item.quantity<=0){
-      alerts.push(`🚨 Stock Alert: <strong>${item.product_name}</strong> is completely <strong>Out of Stock</strong>!`);
+      alerts.push(`🚨 Stock Alert: <strong>${item.product_name}</strong> is completely <strong>Out of Stock</strong>! <button onclick="quickRestockItem('${item.product_name.replace(/'/g, "\\'")}', 150)" style="padding: 2px 6px; font-size: 0.65rem; border: none; background: #ef4444; color: #fff; border-radius: 4px; cursor: pointer; margin-left: 10px; font-weight: 700; font-family: inherit;">⚡ Quick Restock</button>`);
     } else if(item.quantity<=item.reorder_level){
-      alerts.push(`⚠️ Low Stock: <strong>${item.product_name}</strong> has only <strong>${item.quantity} units left</strong> (Low threshold: ${item.reorder_level}).`);
+      alerts.push(`⚠️ Low Stock: <strong>${item.product_name}</strong> has only <strong>${item.quantity} units left</strong> (Low threshold: ${item.reorder_level}). <button onclick="quickRestockItem('${item.product_name.replace(/'/g, "\\'")}', ${item.reorder_level * 2})" style="padding: 2px 6px; font-size: 0.65rem; border: none; background: #eab308; color: #000; border-radius: 4px; cursor: pointer; margin-left: 10px; font-weight: 700; font-family: inherit;">⚡ Quick Restock</button>`);
     }
   });
 
@@ -109,6 +111,12 @@ async function loadOverview(){
       alerts.push(`💸 Outstanding Credit: <strong>${dist.name}</strong> owes you <strong>${fmt(debtVal)}</strong>. <a href="${waLink}" target="_blank" style="color: var(--color-brand); font-weight: 700; text-decoration: underline; margin-left: 8px;">Send WhatsApp Nudge</a>`);
     }
   });
+
+  // C. Profile Check Alert
+  const { data: profile } = await sb.from('profiles').select('shop_name, shop_address').eq('id', uid).single();
+  if (!profile?.shop_name || !profile?.shop_address || profile?.shop_name === "YOUR SHOP NAME" || profile?.shop_address.includes("Near M2K Cinemas")) {
+    alerts.push(`⚙️ <strong>Invoice Setup:</strong> Please customize your own shop details so printed duplicate invoices fully fit you! <a href="#" onclick="openShopProfileModal(); return false;" style="color: var(--color-brand); font-weight: 700; text-decoration: underline; margin-left: 8px;">Set Up Your Shop Profile</a>`);
+  }
 
   // 2. Render warning panel in DOM
   const container=document.getElementById('smartAlertsContainer');
@@ -141,46 +149,176 @@ async function loadOrders(){
     return;
   }
   tbody.innerHTML=data.map(r=>`
-    <tr>
-      <td><strong>${r.product_name}</strong></td>
+    <tr style="cursor: pointer;" onclick="if(event.target.tagName !== 'BUTTON') viewInvoice('${r.id}')">
+      <td><strong style="color: var(--color-brand); text-decoration: underline;">${r.product_name}</strong></td>
       <td>${r.distributor}</td>
       <td>${r.quantity} ${r.unit||'units'}</td>
       <td>${fmt(r.amount)}</td>
       <td>${fmtDate(r.created_at)}</td>
       <td><span class="badge ${r.status==='Delivered'?'delivered':r.status==='In Transit'?'transit':'pending'}">${r.status}</span></td>
-      <td><button class="btn-del" onclick="delOrder('${r.id}')">Remove</button></td>
+      <td style="white-space: nowrap;" onclick="event.stopPropagation();">
+        <button class="btn-add" onclick="viewInvoice('${r.id}')" style="padding: 4px 8px; font-size: 0.75rem; background: var(--color-brand-glow); color: var(--color-brand); border: 1px solid var(--color-brand-border); margin-right: 6px; cursor: pointer; border-radius: var(--radius-sm); font-weight: 700;">Bill</button>
+        <button class="btn-del" onclick="delOrder('${r.id}')">Remove</button>
+      </td>
     </tr>`).join('');
 }
-async function addOrder(e){
-  e.preventDefault();
-  const product_name = document.getElementById('o-product').value.trim();
-  const distributor = document.getElementById('o-dist').value.trim();
-  const quantity = parseInt(document.getElementById('o-qty').value)||0;
-  const amount = parseFloat(document.getElementById('o-amount').value)||0;
+// MULTI-ITEM BASKET MANAGERS
+async function openNewOrderModal() {
+  document.getElementById('o-dist').value = "";
+  document.getElementById('o-notes').value = "";
+  document.getElementById('o-status').selectedIndex = 0;
+  
+  // Dynamic Autocomplete Loading
+  const { data: invList } = await sb.from('inventory').select('*').eq('user_id', currentUser.id);
+  const { data: distList } = await sb.from('distributors').select('name').eq('user_id', currentUser.id);
+  
+  const invDatalist = document.getElementById('inv-products-datalist');
+  if (invDatalist && invList) {
+    invDatalist.innerHTML = invList.map(item => `<option value="${item.product_name}">`).join('');
+  }
+  
+  const distDatalist = document.getElementById('inv-distributors-datalist');
+  if (distDatalist && distList) {
+    distDatalist.innerHTML = distList.map(d => `<option value="${d.name}">`).join('');
+  }
 
-  if(!product_name){ toast('Validation Error','Please enter a product name.',true); return; }
-  if(!distributor){ toast('Validation Error','Please enter a distributor store.',true); return; }
-  if(quantity <= 0){ toast('Validation Error','Quantity must be greater than 0.',true); return; }
-  if(amount <= 0){ toast('Validation Error','Amount must be greater than 0.',true); return; }
+  // Cache locally
+  window.currentInventoryCache = invList || [];
+  
+  const tbody = document.getElementById('orderBasketBody');
+  if (tbody) {
+    tbody.innerHTML = "";
+  }
+  
+  // Start with one blank row default
+  addBasketItemRow();
+  openModal('modal-order');
+}
 
-  const btn=e.target.querySelector('.btn-save');
-  btn.textContent='Processing...';btn.disabled=true;
-  const {error}=await sb.from('orders').insert({
-    user_id:currentUser.id,
-    product_name,
-    distributor,
-    quantity,
-    unit:document.getElementById('o-unit').value,
-    amount,
-    status:document.getElementById('o-status').value,
-    notes:document.getElementById('o-notes').value.trim()
+function addBasketItemRow(name = "", qty = "", rate = "") {
+  const tbody = document.getElementById('orderBasketBody');
+  if (!tbody) return;
+  const rowId = 'basket-row-' + Math.random().toString(36).substring(2, 9);
+  const tr = document.createElement('tr');
+  tr.id = rowId;
+  tr.style.borderBottom = '1px solid #f1f5f9';
+  tr.innerHTML = `
+    <td style="padding: 6px 4px;">
+      <input class="basket-pname" list="inv-products-datalist" onchange="autoFillBasketItemRate(this)" value="${name}" placeholder="e.g. Tata Salt Premium" required style="width: 100%; padding: 6px; border: 1px solid var(--color-border); border-radius: 4px; box-sizing: border-box; font-size: 0.8rem; font-family: inherit;">
+    </td>
+    <td style="padding: 6px 4px; text-align: center;">
+      <input class="basket-pqty" type="number" min="1" value="${qty || 100}" required oninput="calculateBasketTotal()" style="width: 100%; padding: 6px; border: 1px solid var(--color-border); border-radius: 4px; box-sizing: border-box; font-size: 0.8rem; font-family: inherit; text-align: center;">
+    </td>
+    <td style="padding: 6px 4px; text-align: right;">
+      <input class="basket-prate" type="number" min="0.01" step="0.01" value="${rate || 50}" required oninput="calculateBasketTotal()" style="width: 100%; padding: 6px; border: 1px solid var(--color-border); border-radius: 4px; box-sizing: border-box; font-size: 0.8rem; font-family: inherit; text-align: right;">
+    </td>
+    <td style="padding: 6px 4px; text-align: center;">
+      <button type="button" onclick="deleteBasketItemRow('${rowId}')" style="background: transparent; border: none; color: #ef4444; cursor: pointer; padding: 4px;">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      </button>
+    </td>
+  `;
+  tbody.appendChild(tr);
+  calculateBasketTotal();
+}
+
+function autoFillBasketItemRate(inputElement) {
+  const selectedValue = inputElement.value.trim().toLowerCase();
+  const cachedItem = (window.currentInventoryCache || []).find(item => item.product_name.toLowerCase() === selectedValue);
+  if (cachedItem) {
+    const row = inputElement.closest('tr');
+    if (row) {
+      const rateInput = row.querySelector('.basket-prate');
+      if (rateInput) {
+        rateInput.value = cachedItem.selling_price || 0;
+        calculateBasketTotal();
+        toast('Price Auto-Filled! 🏷️', `Selling rate for ${cachedItem.product_name} pre-filled as ₹${cachedItem.selling_price}.`);
+      }
+    }
+  }
+}
+
+function deleteBasketItemRow(id) {
+  const row = document.getElementById(id);
+  if (row) row.remove();
+  calculateBasketTotal();
+}
+
+function calculateBasketTotal() {
+  const rows = document.querySelectorAll('#orderBasketBody tr');
+  let grandTotal = 0;
+  rows.forEach(row => {
+    const qty = parseFloat(row.querySelector('.basket-pqty').value) || 0;
+    const rate = parseFloat(row.querySelector('.basket-prate').value) || 0;
+    grandTotal += qty * rate;
   });
-  btn.textContent='Save Order Entry';btn.disabled=false;
-  if(error){toast('Database Error',error.message,true);return;}
-  toast('Transaction Logged','Order registered securely.');
+  const totalDisplay = document.getElementById('basketGrandTotal');
+  if (totalDisplay) {
+    totalDisplay.textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+}
+
+async function addOrder(e) {
+  e.preventDefault();
+  const dist = document.getElementById('o-dist').value.trim();
+  const status = document.getElementById('o-status').value;
+  const userNotes = document.getElementById('o-notes').value.trim();
+
+  const rows = document.querySelectorAll('#orderBasketBody tr');
+  if (rows.length === 0) {
+    toast('Validation Error', 'Please add at least one item to your basket.', true);
+    return;
+  }
+
+  const items = [];
+  let grandTotal = 0;
+  
+  rows.forEach(row => {
+    const name = row.querySelector('.basket-pname').value.trim();
+    const qty = parseInt(row.querySelector('.basket-pqty').value) || 0;
+    const rate = parseFloat(row.querySelector('.basket-prate').value) || 0;
+    const amount = qty * rate;
+    grandTotal += amount;
+    items.push({ name, qty, rate, amount });
+  });
+
+  const emptyNameItem = items.find(item => !item.name);
+  if (emptyNameItem) {
+    toast('Validation Error', 'Product Name is required for all basket items.', true);
+    return;
+  }
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.textContent = 'Processing...'; btn.disabled = true;
+
+  const notesPayload = JSON.stringify({
+    items: items,
+    userNotes: userNotes
+  });
+
+  const primaryItem = items[0];
+  const { error } = await sb.from('orders').insert({
+    user_id: currentUser.id,
+    product_name: items.length > 1 ? `${primaryItem.name} (+${items.length - 1} items)` : primaryItem.name,
+    distributor: dist,
+    quantity: primaryItem.qty,
+    unit: 'units',
+    amount: grandTotal,
+    status: status,
+    notes: notesPayload
+  });
+
+  btn.textContent = 'Save Order Entry'; btn.disabled = false;
+
+  if (error) {
+    toast('Database Error', error.message, true);
+    return;
+  }
+
+  toast('Order Recorded! 🎉', `Distribution of ${items.length} items logged successfully.`);
   closeModal('modal-order');
-  e.target.reset();
-  loadOrders();loadOverview();
+  loadOrders();
+  loadOverview();
 }
 async function delOrder(id){
   if(!confirm('Permanently remove this order transaction record?'))return;
@@ -385,6 +523,391 @@ async function addKhata(e){
   e.target.reset();
   loadKhata();loadOverview();
 }
+// INVOICE BOOK CONTROLS
+function numToWords(num) {
+  const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
+  const b = ['', '', 'Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  
+  num = Math.round(num);
+  if ((num = num.toString()).length > 9) return 'Overflow';
+  let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+  if (!n) return ''; 
+  let str = '';
+  str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
+  str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
+  str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
+  str += (n[4] != 0) ? a[Number(n[4])] + 'Hundred ' : '';
+  str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Rupees Only' : 'Rupees Only';
+  return str;
+}
+
+async function viewInvoice(orderId) {
+  activeInvoiceOrderId = orderId;
+  const { data: order, error } = await sb.from('orders').select('*').eq('id', orderId).single();
+  if (error || !order) {
+    toast('Error', 'Could not load order details.', true);
+    return;
+  }
+
+  // Update Eco saver UI button & container state
+  const paper = document.getElementById('invoiceCarbonPaper');
+  const ecoBtn = document.getElementById('btn-eco');
+  const ecoTxt = document.getElementById('inkSaverTxt');
+  if (paper && ecoBtn && ecoTxt) {
+    if (isEcoMode) {
+      paper.classList.add('eco-mode');
+      ecoBtn.style.background = '#059669';
+      ecoTxt.textContent = "Eco Ink Saver: ON";
+    } else {
+      paper.classList.remove('eco-mode');
+      ecoBtn.style.background = '#10b981';
+      ecoTxt.textContent = "Eco Ink Saver: OFF";
+    }
+  }
+
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  
+  const shopName = profile?.shop_name || currentUser.user_metadata?.shop_name || "YOUR SHOP NAME";
+  const shopAddress = profile?.shop_address || currentUser.user_metadata?.shop_address || "Near M2K Cinemas E 115 Ground Floor Sector8 Rohini New Delhi 110085";
+  const email = profile?.email || currentUser.email || "sauravkumaryadav@gmail.com";
+  const gstin = profile?.gstin || currentUser.user_metadata?.gstin || "012345678900012";
+  const propName = profile?.full_name || currentUser.user_metadata?.full_name || "Shaurav Yadav";
+  const phone = profile?.phone || currentUser.user_metadata?.phone || "+91 9939999999";
+
+  document.getElementById('invShopName').textContent = shopName;
+  document.getElementById('invShopAddress').textContent = shopAddress;
+  document.getElementById('invShopEmail').textContent = email;
+  document.getElementById('invShopGstin').textContent = gstin;
+  document.getElementById('invProprietor').textContent = propName;
+  document.getElementById('invShopPhone').textContent = phone;
+  document.getElementById('invAuthSigName').textContent = propName;
+
+  const cleanId = order.id.replace(/-/g, '').slice(0, 6).toUpperCase();
+  document.getElementById('invNo').textContent = `RX-${cleanId}`;
+  
+  const orderDate = new Date(order.created_at);
+  const formattedDate = orderDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
+  document.getElementById('invDate').textContent = formattedDate;
+
+  document.getElementById('invCustName').textContent = order.distributor;
+  
+  const { data: distData } = await sb.from('distributors').select('phone').eq('user_id', currentUser.id).eq('name', order.distributor).limit(1);
+  const custPhone = (distData && distData.length > 0) ? distData[0].phone : "—";
+  document.getElementById('invCustPhone').textContent = custPhone;
+
+  let items = [];
+  try {
+    const payload = JSON.parse(order.notes);
+    if (payload && Array.isArray(payload.items)) {
+      items = payload.items;
+    } else {
+      throw new Error();
+    }
+  } catch (e) {
+    items = [{
+      name: order.product_name,
+      qty: order.quantity,
+      rate: Math.round(order.amount / order.quantity) || 0,
+      amount: order.amount
+    }];
+  }
+
+  let tbodyHtml = '';
+  items.forEach((item, index) => {
+    const sNo = (index + 1).toString().padStart(2, '0');
+    tbodyHtml += `
+      <tr style="border-bottom: 1px solid #000; font-weight: 700;">
+        <td class="eco-hide" style="border-right: 1px solid #000; padding: 8px; text-align: center;">${sNo}</td>
+        <td style="border-right: 1px solid #000; padding: 8px; text-transform: uppercase;">${item.name}</td>
+        <td class="eco-hide" style="border-right: 1px solid #000; padding: 8px; text-align: center;">—</td>
+        <td style="border-right: 1px solid #000; padding: 8px; text-align: center;">${item.qty}</td>
+        <td style="border-right: 1px solid #000; padding: 8px; text-align: right;">₹${Math.round(item.rate).toLocaleString('en-IN')}</td>
+        <td style="padding: 8px; text-align: right;">₹${Math.round(item.amount).toLocaleString('en-IN')}</td>
+      </tr>
+    `;
+  });
+  
+  if (!isEcoMode) {
+    const fillCount = 10 - items.length;
+    for (let i = 1; i <= fillCount; i++) {
+      const sNo = (items.length + i).toString().padStart(2, '0');
+      tbodyHtml += `
+        <tr style="border-bottom: 1px dashed rgba(0,0,0,0.1); height: 26px;">
+          <td class="eco-hide" style="border-right: 1px solid #000; padding: 6px; text-align: center; color: #cbd5e1;">${sNo}</td>
+          <td style="border-right: 1px solid #000; padding: 6px;"></td>
+          <td class="eco-hide" style="border-right: 1px solid #000; padding: 6px;"></td>
+          <td style="border-right: 1px solid #000; padding: 6px;"></td>
+          <td style="border-right: 1px solid #000; padding: 6px;"></td>
+          <td style="padding: 6px;"></td>
+        </tr>
+      `;
+    }
+  }
+  document.getElementById('invoiceTableBody').innerHTML = tbodyHtml;
+
+  // Generate real-time dynamic UPI QR Code payment URL
+  const cleanPhone = phone.replace(/\+/g, '').replace(/[^0-9]/g, '');
+  const merchantUpi = profile?.upi_id || `${cleanPhone}@okaxis` || "9304277935@okaxis";
+  const upiUrl = `upi://pay?pa=${merchantUpi}&pn=${encodeURIComponent(shopName)}&am=${order.amount}&tn=RX-${cleanId}&cu=INR`;
+  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
+  
+  const qrImg = document.getElementById('invQRCode');
+  if (qrImg) {
+    qrImg.src = qrApiUrl;
+  }
+
+  document.getElementById('invRupeesWords').textContent = numToWords(order.amount);
+  document.getElementById('invTotalAmt').textContent = `₹${order.amount.toLocaleString('en-IN')}`;
+
+  openModal('modal-invoice');
+}
+
+function toggleInkSaver() {
+  isEcoMode = !isEcoMode;
+  const paper = document.getElementById('invoiceCarbonPaper');
+  const btn = document.getElementById('btn-eco');
+  const txt = document.getElementById('inkSaverTxt');
+  
+  if (isEcoMode) {
+    if (paper) paper.classList.add('eco-mode');
+    if (btn) btn.style.background = '#059669';
+    if (txt) txt.textContent = "Eco Ink Saver: ON";
+    toast('Eco-Ink Saver Active 🍃', 'Borders collapsed and empty rows removed to save 45% printer ink.');
+  } else {
+    if (paper) paper.classList.remove('eco-mode');
+    if (btn) btn.style.background = '#10b981';
+    if (txt) txt.textContent = "Eco Ink Saver: OFF";
+    toast('Eco-Ink Saver Deactivated ⚙️', 'Reverted to classic duplicate carbon bill layout.');
+  }
+  
+  if (activeInvoiceOrderId) {
+    viewInvoice(activeInvoiceOrderId);
+  }
+}
+
+async function sendWhatsAppInvoice() {
+  if (!activeInvoiceOrderId) return;
+  const { data: order } = await sb.from('orders').select('*').eq('id', activeInvoiceOrderId).single();
+  if (!order) return;
+
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  const shopName = profile?.shop_name || "Gupta Wholesalers";
+  const cleanId = order.id.replace(/-/g, '').slice(0, 6).toUpperCase();
+
+  let items = [];
+  try {
+    const payload = JSON.parse(order.notes);
+    if (payload && Array.isArray(payload.items)) {
+      items = payload.items;
+    } else {
+      throw new Error();
+    }
+  } catch (e) {
+    items = [{ name: order.product_name, qty: order.quantity, rate: Math.round(order.amount / order.quantity) || 0, amount: order.amount }];
+  }
+
+  const { data: distData } = await sb.from('distributors').select('phone').eq('user_id', currentUser.id).eq('name', order.distributor).limit(1);
+  const custPhone = (distData && distData.length > 0) ? distData[0].phone : "";
+  const targetPhone = custPhone.replace(/\+/g, '').replace(/[^0-9]/g, '');
+
+  if (!targetPhone) {
+    toast('Missing Contact', 'Distributor phone number is missing in directory. Please update settings first.', true);
+    return;
+  }
+
+  let text = `*📄 INVOICE FROM ${shopName.toUpperCase()}*\n`;
+  text += `*Invoice No:* RX-${cleanId}\n`;
+  text += `*Date:* ${new Date(order.created_at).toLocaleDateString('en-IN')}\n`;
+  text += `*Client Name:* ${order.distributor}\n`;
+  text += `------------------------------------\n`;
+  items.forEach((item, idx) => {
+    text += `${idx + 1}. *${item.name}* (x${item.qty}) @ ₹${item.rate} = *₹${item.amount}*\n`;
+  });
+  text += `------------------------------------\n`;
+  text += `*💰 TOTAL AMOUNT DUE: ₹${order.amount.toLocaleString('en-IN')}*\n\n`;
+  
+  const cleanPhone = (profile?.phone || "").replace(/\+/g, '').replace(/[^0-9]/g, '');
+  const merchantUpi = profile?.upi_id || `${cleanPhone}@okaxis` || "9304277935@okaxis";
+  const upiPayLink = `upi://pay?pa=${merchantUpi}&pn=${encodeURIComponent(shopName)}&am=${order.amount}&tn=RX-${cleanId}`;
+  
+  text += `⚡ *Scan QR on bill or Pay directly via UPI:* \n${upiPayLink}\n\n`;
+  text += `🍃 _Thank you for your business! Sent via Retix Carbon-Free Invoicing._`;
+
+  const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`;
+  window.open(waUrl, '_blank');
+  toast('WhatsApp Draft Fired! 💬', 'Itemized order summary and UPI link redirected successfully.');
+}
+
+// HANDS-FREE SPEECH-TO-BASKET DICTATION
+let voiceRecognition = null;
+let isListening = false;
+
+function toggleVoiceRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    toast('Feature Unsupported', 'Speech Recognition is not supported in this browser. Please use Google Chrome.', true);
+    return;
+  }
+
+  const micBtn = document.getElementById('btn-voice-dictate');
+  const micTxt = document.getElementById('voice-dictate-txt');
+
+  if (isListening) {
+    if (voiceRecognition) {
+      voiceRecognition.stop();
+    }
+    return;
+  }
+
+  voiceRecognition = new SpeechRecognition();
+  voiceRecognition.continuous = false;
+  voiceRecognition.interimResults = false;
+  voiceRecognition.lang = 'en-IN';
+
+  voiceRecognition.onstart = () => {
+    isListening = true;
+    if (micBtn) {
+      micBtn.style.background = '#059669';
+      micBtn.style.transform = 'scale(1.08)';
+    }
+    if (micTxt) micTxt.textContent = "Listening...";
+    toast('Voice Dictation ON 🎙️', 'Speak naturally: e.g. "Add Tata Salt 50 bags" or "Rice 20 boxes".');
+  };
+
+  voiceRecognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.toLowerCase().trim();
+    console.log("Speech transcript:", transcript);
+    toast('Voice Heard 🗣️', `"${transcript}"`);
+    parseVoiceCommand(transcript);
+  };
+
+  voiceRecognition.onerror = (e) => {
+    console.error("Speech recognition error:", e);
+    cleanupVoiceState();
+  };
+
+  voiceRecognition.onend = () => {
+    cleanupVoiceState();
+  };
+
+  voiceRecognition.start();
+}
+
+function cleanupVoiceState() {
+  isListening = false;
+  const micBtn = document.getElementById('btn-voice-dictate');
+  const micTxt = document.getElementById('voice-dictate-txt');
+  if (micBtn) {
+    micBtn.style.background = '#ef4444';
+    micBtn.style.transform = 'scale(1)';
+  }
+  if (micTxt) micTxt.textContent = "Voice Type";
+}
+
+function parseVoiceCommand(text) {
+  const wordsToNumbers = {
+    "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+    "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50, "hundred": 100
+  };
+  
+  let cleanedText = text;
+  Object.keys(wordsToNumbers).forEach(word => {
+    cleanedText = cleanedText.replace(new RegExp(`\\b${word}\\b`, 'g'), wordsToNumbers[word]);
+  });
+
+  const qtyMatch = cleanedText.match(/\b(\d+)\b/);
+  const qty = qtyMatch ? parseInt(qtyMatch[1]) : 100;
+
+  const rateMatch = cleanedText.match(/(?:at|rate|price|for)\s*\b(\d+)\b/);
+  const rate = rateMatch ? parseFloat(rateMatch[1]) : 50;
+
+  let productName = cleanedText
+    .replace(/\badd\b/g, '')
+    .replace(/\bqty\b/g, '')
+    .replace(/\bquantity\b/g, '')
+    .replace(new RegExp(`\\b${qty}\\b`, 'g'), '')
+    .replace(/(?:at|rate|price|for)\s*\b(\d+)\b/g, '')
+    .replace(/\brupees\b/g, '')
+    .replace(/\brs\b/g, '')
+    .replace(/\bbags\b/g, '')
+    .replace(/\bboxes\b/g, '')
+    .replace(/\bunits\b/g, '')
+    .replace(/\bcartons\b/g, '')
+    .trim();
+
+  if (!productName) {
+    productName = "Dictated Product";
+  }
+
+  productName = productName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+  toast('Item Auto-Added! 🛒', `Logged: ${productName} (x${qty}) @ ₹${rate}`);
+  addBasketItemRow(productName, qty, rate);
+}
+
+// SHOP PROFILE SETTINGS CONTROLS
+async function openShopProfileModal() {
+  const { data: profile, error } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  if (error) {
+    console.warn("Could not retrieve existing profile row: ", error);
+  }
+
+  document.getElementById('sp-shop-name').value = profile?.shop_name || "";
+  document.getElementById('sp-gstin').value = profile?.gstin || "";
+  document.getElementById('sp-prop-name').value = profile?.full_name || currentUser.user_metadata?.full_name || "";
+  document.getElementById('sp-phone').value = profile?.phone || currentUser.user_metadata?.phone || "";
+  document.getElementById('sp-address').value = profile?.shop_address || "";
+
+  openModal('modal-shop-profile');
+}
+
+async function saveShopProfile(e) {
+  e.preventDefault();
+  const shopName = document.getElementById('sp-shop-name').value.trim();
+  const gstin = document.getElementById('sp-gstin').value.trim().toUpperCase();
+  const propName = document.getElementById('sp-prop-name').value.trim();
+  const phone = document.getElementById('sp-phone').value.trim();
+  const address = document.getElementById('sp-address').value.trim();
+
+  if (!shopName) { toast('Validation Error', 'Shop/Business Name is required.', true); return; }
+  if (gstin && gstin.length !== 15) { toast('Validation Error', 'GSTIN must be exactly 15 characters.', true); return; }
+  if (!propName) { toast('Validation Error', 'Proprietor Name is required.', true); return; }
+  if (phone.length !== 10 || isNaN(phone)) { toast('Validation Error', 'Phone must be a 10-digit number.', true); return; }
+  if (!address) { toast('Validation Error', 'Shop Address is required.', true); return; }
+
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Saving...";
+
+  const { error } = await sb.from('profiles').upsert({
+    id: currentUser.id,
+    full_name: propName,
+    email: currentUser.email,
+    phone: phone,
+    shop_name: shopName,
+    gstin: gstin,
+    shop_address: address
+  });
+
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Save Profile";
+
+  if (error) {
+    toast('Database Error', error.message, true);
+    return;
+  }
+
+  document.getElementById('sbName').textContent = propName;
+  if(document.getElementById('topName')) {
+    document.getElementById('topName').textContent = propName.split(' ')[0];
+  }
+  document.getElementById('sbInit').textContent = propName.charAt(0).toUpperCase();
+
+  toast('Settings Saved! 🎉', 'Your B2B shop details have been successfully synchronized.');
+  closeModal('modal-shop-profile');
+  loadOverview();
+}
+
 // AI SMART CAMERA VISION & ANTI-THEFT SCANNING
 let visionStream = null;
 let visionInterval = null;
@@ -652,16 +1175,177 @@ function loadVision() {
   }
 }
 
+// FEATURE C: ONE-CLICK QUICK RESTOCK
+async function quickRestockItem(productName, quantity) {
+  await openNewOrderModal();
+  
+  // Find default rate from cache
+  const cachedItem = (window.currentInventoryCache || []).find(item => item.product_name.toLowerCase() === productName.toLowerCase());
+  
+  const firstRow = document.querySelector('#orderBasketBody tr');
+  if (firstRow) {
+    firstRow.querySelector('.basket-pname').value = productName;
+    firstRow.querySelector('.basket-pqty').value = quantity;
+    if (cachedItem) {
+      // Use buying price as standard rate for restocking
+      firstRow.querySelector('.basket-prate').value = cachedItem.buying_price || 30;
+    }
+    calculateBasketTotal();
+    toast('Restock Logged 📦', `Prepared order entry for ${productName} (x${quantity}).`);
+  }
+}
+
+// FEATURE A: UNIVERSAL COMMAND PALETTE (CTRL + K)
+let currentPaletteItems = [];
+
+async function openCommandPalette() {
+  openModal('modal-command-palette');
+  const input = document.getElementById('cmdSearchInput');
+  if (input) {
+    input.value = "";
+    setTimeout(() => input.focus(), 150);
+  }
+  
+  // Cache data collections globally for high-speed local filtering
+  const [invRes, distRes] = await Promise.all([
+    sb.from('inventory').select('product_name, quantity, selling_price').eq('user_id', currentUser.id),
+    sb.from('distributors').select('name, balance').eq('user_id', currentUser.id)
+  ]);
+  
+  window.paletteInvList = invRes.data || [];
+  window.paletteDistList = distRes.data || [];
+  
+  queryCommandPalette();
+}
+
+function queryCommandPalette() {
+  const query = document.getElementById('cmdSearchInput').value.trim().toLowerCase();
+  const resultsContainer = document.getElementById('cmdPaletteResults');
+  if (!resultsContainer) return;
+  
+  const matches = [];
+
+  // 1. Navigation items matches
+  const navItems = [
+    { title: 'Overview Analytics', action: () => { closeModal('modal-command-palette'); nav('overview'); }, icon: '📊', type: 'Navigation' },
+    { title: 'Orders Ledger', action: () => { closeModal('modal-command-palette'); nav('orders'); }, icon: '📋', type: 'Navigation' },
+    { title: 'Smart Warehouse Inventory', action: () => { closeModal('modal-command-palette'); nav('inventory'); }, icon: '📦', type: 'Navigation' },
+    { title: 'Distributors Directory', action: () => { closeModal('modal-command-palette'); nav('distributors'); }, icon: '🤝', type: 'Navigation' },
+    { title: 'Khata Cash Ledger', action: () => { closeModal('modal-command-palette'); nav('khata'); }, icon: '📓', type: 'Navigation' },
+    { title: 'AI Smart Vision Shield', action: () => { closeModal('modal-command-palette'); nav('vision'); }, icon: '🛡️', type: 'Navigation' },
+  ];
+
+  // 2. Action items matches
+  const actionItems = [
+    { title: 'Record New Multi-Item Order', action: () => { closeModal('modal-command-palette'); openNewOrderModal(); }, icon: '➕', type: 'Action' },
+    { title: 'Add Warehouse Product', action: () => { closeModal('modal-command-palette'); openModal('modal-inv'); }, icon: '📥', type: 'Action' },
+    { title: 'Register Supply Partner', action: () => { closeModal('modal-command-palette'); openModal('modal-dist'); }, icon: '👤', type: 'Action' },
+    { title: 'Record Cash Book Entry', action: () => { closeModal('modal-command-palette'); openModal('modal-khata'); }, icon: '💸', type: 'Action' },
+    { title: 'Setup Shop Details', action: () => { closeModal('modal-command-palette'); openShopProfileModal(); }, icon: '⚙️', type: 'Action' }
+  ];
+
+  // Merge lists
+  const staticItems = [...navItems, ...actionItems];
+
+  if (!query) {
+    // Show defaults/quicklinks when search is empty
+    renderPaletteResults(staticItems);
+    return;
+  }
+
+  // Filter static actions
+  staticItems.forEach(item => {
+    if (item.title.toLowerCase().includes(query) || item.type.toLowerCase().includes(query)) {
+      matches.push(item);
+    }
+  });
+
+  // Filter products matching query
+  (window.paletteInvList || []).forEach(p => {
+    if (p.product_name.toLowerCase().includes(query)) {
+      matches.push({
+        title: `${p.product_name} (In stock: ${p.quantity} units)`,
+        action: () => {
+          closeModal('modal-command-palette');
+          nav('inventory');
+          toast('Product Queried 📦', `${p.product_name} is priced at ₹${p.selling_price}.`);
+        },
+        icon: '📦',
+        type: 'Inventory Item'
+      });
+    }
+  });
+
+  // Filter distributors matching query
+  (window.paletteDistList || []).forEach(d => {
+    if (d.name.toLowerCase().includes(query)) {
+      matches.push({
+        title: `${d.name} (Credit: ₹${d.balance})`,
+        action: () => {
+          closeModal('modal-command-palette');
+          nav('distributors');
+          toast('Partner Queried 🤝', `Logistic balance for ${d.name} is ₹${d.balance}.`);
+        },
+        icon: '👤',
+        type: 'Distributor'
+      });
+    }
+  });
+
+  renderPaletteResults(matches);
+}
+
+function renderPaletteResults(items) {
+  const container = document.getElementById('cmdPaletteResults');
+  if (!container) return;
+  
+  if (items.length === 0) {
+    container.innerHTML = `<div style="text-align: center; color: var(--color-muted); padding: 20px; font-size: 0.85rem;">No exact results matching query...</div>`;
+    return;
+  }
+
+  currentPaletteItems = items;
+
+  container.innerHTML = items.map((item, idx) => `
+    <div onclick="executePaletteItem(${idx})" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s ease; border: 1px solid var(--color-border); font-family: inherit; font-size: 0.85rem;" onmouseover="this.style.background='var(--color-brand-glow)';" onmouseout="this.style.background='transparent';">
+      <div style="display: flex; align-items: center; gap: 8px; font-family: inherit; color: var(--color-navy); font-weight: 700;">
+        <span>${item.icon}</span>
+        <span>${item.title}</span>
+      </div>
+      <span style="font-size: 0.65rem; background: var(--color-border); color: var(--color-muted); padding: 2px 6px; border-radius: 4px; font-weight: 800; font-family: monospace;">${item.type}</span>
+    </div>
+  `).join('');
+}
+
+function executePaletteItem(idx) {
+  const item = currentPaletteItems[idx];
+  if (item && typeof item.action === 'function') {
+    item.action();
+  }
+}
+
+// Global hotkey binding listener
+window.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    openCommandPalette();
+  }
+  if (e.key === 'Escape') {
+    closeModal('modal-command-palette');
+  }
+});
+
 // INITIALIZATION
 window.addEventListener('DOMContentLoaded',async()=>{
   const {data:{session}}=await sb.auth.getSession();
   if(!session){window.location.href='index.html';return;}
   currentUser=session.user;
-  const name=currentUser.user_metadata?.full_name||currentUser.email?.split('@')[0]||'User';
-  const first=name.split(' ')[0];
-  document.getElementById('sbName').textContent=name;
-  document.getElementById('sbInit').textContent=name[0].toUpperCase();
-  document.getElementById('topName').textContent=first;
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  const name = profile?.full_name || currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User';
+  const first = name.split(' ')[0];
+  document.getElementById('sbName').textContent = name;
+  document.getElementById('sbInit').textContent = name[0].toUpperCase();
+  document.getElementById('topName').textContent = first;
   
   // Mobile Sidebar Toggle and Listeners
   const sidebar = document.getElementById('dashboardSidebar');
